@@ -1,4 +1,4 @@
-package ginswag
+package gindocs
 
 import (
 	"flag"
@@ -17,9 +17,11 @@ import (
 )
 
 var doc *string
+var tmp_respcode = ""
+var tmp_resp = ""
 
 func init() {
-	doc = flag.String("doc", "default", "value as swagger")
+	doc = flag.String("doc", "default", "value as swagger, readme.md")
 	flag.Parse()
 	// fmt.Println(*gen)
 }
@@ -34,7 +36,14 @@ func Use(router *gin.Engine) {
 		for _, route := range allrouter {
 			generate(route.Path, route.Method, route.Handler)
 		}
-		Exec()
+		// Exec()
+		os.Exit(3)
+	} else if *doc == "markdown" {
+		allrouter := router.Routes()
+		for _, route := range allrouter {
+			generate(route.Path, route.Method, route.Handler)
+		}
+		ExecMarkdown()
 		os.Exit(3)
 	}
 }
@@ -61,20 +70,26 @@ func generate(url, method, handler string) {
 		fmt.Println("HANDLER : ", handler)
 		fmt.Println("CONTROLLER : ", findcontroll)
 		fmt.Println("FUNCTION : ", findfunc)
+
 		dir := GetDir()
 		data, _ := ioutil.ReadFile(dir + "/controllers/" + findcontroll + ".go")
 		// fmt.Println(err)
-		parsingtahap1(findfunc, string(data), method, findcontroll)
+		parsingtahap1(url, findfunc, string(data), method, findcontroll)
+		if *doc == "markdown" {
+			setmenumd(method, url)
+			setgetmd(method, url, databodymd)
+			databodymd = []BodyMd{}
+		}
 	}
 }
 
 //LIST FUNGSI
-func parsingtahap1(prefix, data, method, findcontroll string) {
+func parsingtahap1(url, prefix, data, method, findcontroll string) {
 	listfunc := strings.Split(string(data), "func")
 	for i, func_row := range listfunc {
 		if i > 0 {
 			// fmt.Println(i, "->", func_row)
-			status := parsingtahap2(prefix, func_row, method, findcontroll)
+			status := parsingtahap2(url, prefix, func_row, method, findcontroll)
 			if status == true {
 				break
 			}
@@ -83,7 +98,7 @@ func parsingtahap1(prefix, data, method, findcontroll string) {
 }
 
 //MENCARI FUNGSI
-func parsingtahap2(prefix, data, method, findcontroll string) bool {
+func parsingtahap2(url, prefix, data, method, findcontroll string) bool {
 	if strings.Contains(data, prefix) {
 		// fmt.Println(data) //FUNGSI DI TEMUKAN
 		query := parsingquery(data)
@@ -148,12 +163,15 @@ func parsingresponse(data, namecontrol string) (resp string) {
 			oneline := getvalue[0]
 			getvaluecode := strings.Split(oneline, ",")
 			fmt.Println("CODE", getvaluecode[0])
-
+			// tmp_respcode = getvaluecode[0]
 			listvaluetext := strings.Split(oneline, "responses.")
 			getvalueresponse := strings.Split(listvaluetext[1], "{")
 			dir := GetDir()
 			resp = parsingstruct(dir+"/responses/"+namecontrol+".go", getvalueresponse[0], namecontrol, "responses")
 			fmt.Println("RESP", resp)
+			// tmp_resp = resp
+
+			databodymd = append(databodymd, BodyMd{Code: getvaluecode[0], Response: resp})
 		}
 	}
 

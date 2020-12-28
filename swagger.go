@@ -1,4 +1,4 @@
-package ginswag
+package gindocs
 
 import (
 	"fmt"
