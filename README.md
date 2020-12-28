@@ -32,7 +32,7 @@ Please check the example folder for details.
 package main
 
 import (
-	program "github.com/didintri196/go-docs"
+	builder "github.com/didintri196/go-docs"
 )
 
 func Middleware() {
