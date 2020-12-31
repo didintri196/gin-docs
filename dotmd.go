@@ -22,9 +22,17 @@ func setmenumd(method, url string) {
 	menumd += strconv.Itoa(countdata) + `.  [` + method + `] ` + url + "\n"
 	countdata++
 }
-
-func setgetmd(method, url string, dataresp []BodyMd) {
+func seturl(method, url string) {
 	body += "\n### [" + method + "] " + url + "\n"
+}
+func setrequestmd(jsondata string) {
+	body += "*REQUEST JSON*\n"
+	body += "\n```json\n"
+	body += jsondata
+	body += "\n```\n"
+}
+
+func setresponsemd(dataresp []BodyMd) {
 	for _, a := range dataresp {
 		body += "*RESPONSE CODE " + a.Code + "*\n"
 		body += "\n```json\n"
@@ -32,6 +40,7 @@ func setgetmd(method, url string, dataresp []BodyMd) {
 		body += "\n```\n"
 	}
 }
+
 func ExecMarkdown() {
 	fmt.Println(menumd)
 	dir := GetDir()

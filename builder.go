@@ -74,10 +74,13 @@ func generate(url, method, handler string) {
 		dir := GetDir()
 		data, _ := ioutil.ReadFile(dir + "/controllers/" + findcontroll + ".go")
 		// fmt.Println(err)
+		if *doc == "markdown" {
+			seturl(method, url)
+		}
 		parsingtahap1(url, findfunc, string(data), method, findcontroll)
 		if *doc == "markdown" {
 			setmenumd(method, url)
-			setgetmd(method, url, databodymd)
+			setresponsemd(databodymd)
 			databodymd = []BodyMd{}
 		}
 	}
@@ -107,6 +110,7 @@ func parsingtahap2(url, prefix, data, method, findcontroll string) bool {
 		fmt.Println("PARAM :", param)
 		if method != "GET" {
 			body := parsingbody(data, findcontroll)
+			setrequestmd(body)
 			fmt.Println("BODY :", body)
 		}
 		parsingresponse(data, findcontroll)
