@@ -19,7 +19,7 @@ go get github.com/didintri196/gin-docs
 Import it with:
 
 ```go
-import builder "github.com/didintri196/go-docs"
+import builder "github.com/didintri196/gin-docs"
 ```
 
 and use `builder` as the package name inside the code.
@@ -32,7 +32,7 @@ Please check the example folder for details.
 package main
 
 import (
-	builder "github.com/didintri196/go-docs"
+	builder "github.com/didintri196/gin-docs"
 )
 
 func Middleware() {
